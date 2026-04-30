@@ -1,4 +1,4 @@
-""""
+"""
 NFL Win/Loss Prediction (2010-2019)
 Group Members: TezJioh Knox, Nate Bamikole
 
@@ -383,34 +383,6 @@ def chart_class_balance(games, ax):
     ax.set_ylabel("Number of Games")
 
 
-def chart_diff_distributions(games, ax):
-    """
-    Histogram showing how differential features are distributed
-    for games the home team won vs lost.
-    If the distributions are separated, the feature has predictive power.
-    """
-
-    diff_cols = ["diff_rush_yards", "diff_pass_yards", "diff_turnovers"]
-    colors    = ["#3498db", "#e67e22", "#9b59b6"]
-
-    for col, color in zip(diff_cols, colors):
-        # Grab the diff values for games the home team WON
-        home_wins = games.loc[games["home_win"] == 1, col]
-        # Grab the diff values for games the home team LOST
-        home_losses = games.loc[games["home_win"] == 0, col]
-
-        # Draw a filled histogram for wins and an outline histogram for losses
-        ax.hist(home_wins,   bins=25, alpha=0.5, color=color, label=f"{col} (win)")
-        ax.hist(home_losses, bins=25, alpha=0.3, color=color,
-                histtype="step", linewidth=1.5, label=f"{col} (loss)")
-
-    # Draw a vertical line at 0 (the breakeven point — neither team has an advantage)
-    ax.axvline(0, color="black", linestyle="--", linewidth=1)
-
-    ax.set_title("Differential Feature Distributions", fontsize=12)
-    ax.set_xlabel("Home Avg − Away Avg")
-    ax.legend(fontsize=7, ncol=2)
-
 
 def chart_correlation_heatmap(games, feature_cols, ax):
     """
@@ -758,8 +730,8 @@ def main():
     # ------------------------------------------------------------------
     #
     # Grid layout (3 rows x 4 columns):
-    #   Row 0: [class balance] [diff distributions] [correlation heatmap (2 cols wide)]
-    #   Row 1: [LR Q1 CM]     [XGB Q1 CM]          [LR Q2 CM]     [XGB Q2 CM]
+    #   Row 0: [class balance] [correlation heatmap — 3 cols wide]
+    #   Row 1: [LR Q1 CM]     [XGB Q1 CM]     [LR Q2 CM]     [XGB Q2 CM]
     #   Row 2: [model comparison (2 cols wide)] [XGB Q1 importance] [XGB Q2 importance]
     #
 
@@ -771,9 +743,8 @@ def main():
     grid = gridspec.GridSpec(3, 4, figure=fig, hspace=0.55, wspace=0.4)
 
     # Row 0: exploratory charts
-    ax_balance      = fig.add_subplot(grid[0, 0])       # 1 column wide
-    ax_diff_dist    = fig.add_subplot(grid[0, 1])       # 1 column wide
-    ax_correlation  = fig.add_subplot(grid[0, 2:4])     # 2 columns wide
+    ax_balance     = fig.add_subplot(grid[0, 0])       # 1 column wide
+    ax_correlation = fig.add_subplot(grid[0, 1:4])     # 3 columns wide
 
     # Row 1: confusion matrices (one per model)
     ax_cm_lr_q1  = fig.add_subplot(grid[1, 0])
@@ -788,7 +759,6 @@ def main():
 
     # Draw each chart
     chart_class_balance(games, ax_balance)
-    chart_diff_distributions(games, ax_diff_dist)
     chart_correlation_heatmap(games, Q2_FEATURES[:9], ax_correlation)
 
     chart_confusion_matrix(confusion_matrix(y_test, pred_lr_q1),
