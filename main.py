@@ -48,7 +48,7 @@ warnings.filterwarnings("ignore")  # hide unimportant warnings so output stays c
 # =============================================================================
 
 # Path to the folder containing the CSV files (relative to this script's location)
-DATA_DIR = os.path.dirname(__file__) or "."
+DATA_DIR = os.path.join(os.path.dirname(__file__), "NFL_Game_Stats")
 
 # List of years we want to load: [2010, 2011, 2012, ..., 2019]
 ALL_YEARS = list(range(2010, 2020))
